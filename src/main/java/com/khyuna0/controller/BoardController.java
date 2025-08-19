@@ -1,16 +1,24 @@
 package com.khyuna0.controller;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.khyuna0.dao.BoardDao;
+import com.khyuna0.dto.BoardDto;
 
 
 @WebServlet("*.do")
 public class BoardController extends HttpServlet {
-      
+     
+	
+	
     public BoardController() {
         super();
        
@@ -27,8 +35,45 @@ public class BoardController extends HttpServlet {
 
 		request.setCharacterEncoding("utf-8");
 		
-		String url = request.getRequestURI();
-		System.out.println("url : " + url);
+		String uri = request.getRequestURI();
+		String conPath = request.getContextPath();
+		String comm = uri.substring(conPath.length()); // 최종 요청 값
+		String viewPage = null;
+		
+		BoardDao boardDao = new BoardDao();
+		List<BoardDto> bDtos = new ArrayList<BoardDto>();
+
+		if(comm.equals("/boardList.do")) { // 게시판 모든 글 목록 보기 요청
+			bDtos = boardDao.boardList();
+			request.setAttribute("bDtos", bDtos);
+			viewPage = "boardList.jsp";	
+		} else if (comm.equals("/boardWrite.do")) { // 게시판 글쓰기
+			viewPage = "boardWrite.jsp";
+		} else if (comm.equals("/modifyForm.do")) { // 글 수정
+			viewPage = "modifyForm.jsp";
+		} else if (comm.equals("/delete.do")) { // 글 삭제 후 글 목록 이동
+			viewPage = "boardList.do";
+		} else if (comm.equals("/contentsView.do")) { // 글 목록에서 선택된 글 목록 내용이 보여지는 페이지로 이동
+			String bnum = request.getParameter("bnum");
+			BoardDto boardDto = boardDao.contentView(bnum);
+			request.setAttribute("boardDto", boardDto);
+			viewPage = "contentsView.jsp";
+		} else if (comm.equals("/writeOk.do")) {
+			request.setCharacterEncoding("utf-8");
+			
+			String btitle = request.getParameter("title");
+			String bcontents = request.getParameter("content");
+			String memberid = request.getParameter("writer");
+			
+			boardDao.boardWrite(btitle,bcontents,memberid, 0);
+			viewPage = "boardList.do";
+		}
+
+		// ↓ boardList.jsp 에게 웹 서블릿에서 제작한 request 객체를 전달한 후 뷰페이지로 포워딩 하는 코드
+		RequestDispatcher dispatcher = request.getRequestDispatcher(viewPage); 
+		dispatcher.forward(request, response);
+
+		
 		
 	}
 	

@@ -1,6 +1,3 @@
-<%@page import="com.khyuna0.dto.BoardDto"%>
-<%@page import="java.util.List"%>
-<%@page import="com.khyuna0.dao.BoardDao"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
@@ -12,12 +9,7 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-	<%
-		BoardDao bDao = new BoardDao();
-		List<BoardDto> bDtos = bDao.boardList();
-		request.setAttribute("bDtos", bDtos); 
-	%>
-	
+
   <!-- 네비게이션 -->
   <header class="navbar">
     <div class="logo">쇼핑몰</div>
@@ -26,7 +18,7 @@
         <li><a href="index.jsp">홈</a></li>
         <li><a href="#">안내</a></li>
         <li><a href="#">공지사항</a></li>
-        <li><a href="boardList.jsp">게시판</a></li>
+        <li><a href="boardList.do">게시판</a></li>
       </ul>
     </nav>
   </header>
@@ -43,9 +35,10 @@
 
     <!-- 상단 버튼 -->
     <div class="board-header">
-      <a href="boardWrite.jsp" class="btn-write">글쓰기</a>
-    </div>
-
+	  <a href="boardWrite.do" class="btn-write">글쓰기</a>
+	  <a href="delete.do" class="btn-delete">글 삭제</a>
+	</div>
+    
     <!-- 목록 테이블 -->
     <table class="board-table">
       <thead>
@@ -66,20 +59,20 @@
 	      <td>
 	      	<c:choose>
 		      	<c:when test="${fn:length(bDto.btitle) > 10}">
-		      	<a href="#">${fn:substring(bDto.btitle,0,10)}...</a>
+		      	<a href="contentsView.do?bnum=${bDto.bnum}">${fn:substring(bDto.btitle,0,10)}...</a>
 		      	</c:when>
 		      	<c:otherwise>
-						<a href="#">${bDto.btitle}</a>
+						<a href="contentsView.do?bnum=${bDto.bnum}">${bDto.btitle}</a>
 				</c:otherwise>
 	      	</c:choose>
 	      </td>
 	      <td>
 	      <c:choose>
 		      	<c:when test="${fn:length(bDto.bcontents) > 20}">
-		      	<a href="#">${fn:substring(bDto.bcontents,0,20)}...</a>
+		      	<a href="contentsView.do?bnum=${bDto.bnum}">${fn:substring(bDto.bcontents,0,20)}...</a>
 		      	</c:when>
 		      	<c:otherwise>
-						<a href="#">${bDto.bcontents}</a>
+						<a href="contentsView.do?bnum=${bDto.bnum}">${bDto.bcontents}</a>
 				</c:otherwise>
 	      	</c:choose>
 	      </td>	

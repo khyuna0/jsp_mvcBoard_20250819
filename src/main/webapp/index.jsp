@@ -15,7 +15,7 @@
         <li><a href="index.jsp">홈</a></li>
         <li><a href="#">안내</a></li>
         <li><a href="#">공지사항</a></li>
-        <li><a href="boardList.jsp">게시판</a></li>
+        <li><a href="boardList.do">게시판</a></li>
       </ul>
     </nav>
   </header>
@@ -30,7 +30,7 @@
   <section id="board" class="board-container">
     <h1>게시판</h1>
     <div class="board-header">
-      <a href="boardWrite.jsp" class="btn-write">글쓰기</a>
+      <a href="boardWrite.do" class="btn-write">글쓰기</a>
     </div>
     <table>
       <thead>

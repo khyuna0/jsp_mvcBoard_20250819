@@ -52,7 +52,35 @@ body {
   margin: 0 0 20px;
   color: #1e88e5;
 }
-.board-header { text-align: right; margin-bottom: 12px; }
+
+.board-header {
+  text-align: right;       /* 버튼들을 오른쪽 정렬 */
+}
+
+.board-header a {
+  display: inline-block;   /* 버튼처럼 보이도록 */
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  margin-left: 8px;        /* 버튼 간격 */
+}
+
+/* 글쓰기 버튼 */
+.btn-write {
+  background-color: #1e88e5;
+  color: #fff;
+}
+
+/* 글 삭제 버튼 */
+.btn-delete {
+  background-color: #e53935;
+  color: #fff;
+}
+.btn-delete:hover {
+  background-color: #c62828;
+}
+
 
 /* 게시판 목록 */
 .board-container {

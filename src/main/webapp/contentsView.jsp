@@ -1,4 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -18,18 +20,18 @@
   </header>
 
   <div class="view-container">
-    <h1 class="view-title">테스트 글 제목</h1>
+    <h1 class="view-title">${boardDto.btitle }</h1>
     <div class="view-info">
-      <span>작성자: user01</span>
-      <span>조회수: 15</span>
-      <span>작성일: 2025-08-20</span>
+      <span>작성자: ${boardDto.memberid }</span>
+      <span>조회수: ${boardDto.bhit }</span>
+      <span>작성일: ${boardDto.bdate }</span>
     </div>
     <div class="view-content">
-      <p>이곳에 글 내용이 표시됩니다.</p>
+      <p>${boardDto.bcontents }.</p>
     </div>
     <div class="view-buttons">
-      <a href="boardList.jsp" class="btn">목록</a>
-      <a href="modyfiForm.jsp" class="btn">수정</a>
+      <a href="boardList.do" class="btn">목록</a>
+      <a href="modyfiForm.do" class="btn">수정</a>
       <a href="#" class="btn delete">삭제</a>
     </div>
   </div>

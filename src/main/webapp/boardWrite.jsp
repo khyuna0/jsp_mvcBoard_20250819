@@ -19,7 +19,7 @@
 
   <div class="form-container">
     <h1>글쓰기</h1>
-    <form action="insert.jsp" method="post">
+    <form action="writeOk.do" method="post">
       <div class="form-group">
         <label for="title">제목</label>
         <input type="text" id="title" name="title" required>
