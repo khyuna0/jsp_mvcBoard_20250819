@@ -4,7 +4,8 @@
 <!DOCTYPE html>
 <%
 	if (request.getAttribute("errorMsg") != null ) { // 웹 서블릿에서 넘겨준 값을 뺄때는 getAttribute 사용
-		out.println("<script>alert('존재하지 않는 글입니다.');window.location.href='List.do';</script>");
+		String msg = request.getAttribute("errorMsg").toString();
+		out.println("<script>alert('" +msg+ "');window.location.href='List.do';</script>");
 	}
 	
 %>

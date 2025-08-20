@@ -60,7 +60,7 @@ public class BoardController extends HttpServlet {
 				request.setAttribute("boardDto", boardDto);
 				viewPage = "contentsView.jsp"; 
 			} else {
-				request.setAttribute("errorMsg", 1);
+				request.setAttribute("errorMsg", "존재하지 않는 페이지입니다.");
 				viewPage = "contentsView.jsp"; 
 			}
 			
@@ -74,9 +74,12 @@ public class BoardController extends HttpServlet {
 			String memberid = request.getParameter("writer");
 			
 			boardDao.boardWrite(btitle,bcontents,memberid, 0);
-			
-			viewPage = "List.do";
-		} else {
+			response.sendRedirect("List.do");
+			return; // 멈춤
+		}
+		
+		
+		else {
 			viewPage = "index.jsp";
 		}
 
