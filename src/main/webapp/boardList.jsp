@@ -40,7 +40,6 @@
     <!-- 상단 버튼 -->
     <div class="board-header">
 	  <a href="boardWrite.do" class="btn-write">글쓰기</a>
-	  <a href="delete.do" class="btn-delete">글 삭제</a>
 	</div>
     
     <!-- 목록 테이블 -->
@@ -49,8 +48,8 @@
         <tr>
           <th>번호</th>
           <th>제목</th>
-          <th>내용</th>
-          <th>작성자 아이디</th>
+          <th>작성자</th>
+          <th>이메일</th>
           <th>조회수</th>
           <th>날짜</th>
         </tr>
@@ -59,10 +58,10 @@
        	<tbody>
 	  <c:forEach items="${bDtos}" var="bDto">
 	    <tr>
-	      <td>${bDto.bnum}</td>
+	      <td>${bDto.bnum}</td> <!-- 글번호 -->
 	      <td>
 	      	<c:choose>
-		      	<c:when test="${fn:length(bDto.btitle) > 10}">
+		      	<c:when test="${fn:length(bDto.btitle) > 10}"> <!-- 글제목 -->
 		      	<a href="View.do?bnum=${bDto.bnum}">${fn:substring(bDto.btitle,0,10)}...</a>
 		      	</c:when>
 		      	<c:otherwise>
@@ -70,19 +69,10 @@
 				</c:otherwise>
 	      	</c:choose>
 	      </td>
-	      <td>
-	      <c:choose>
-		      	<c:when test="${fn:length(bDto.bcontents) > 20}">
-		      	<a href="View.do?bnum=${bDto.bnum}">${fn:substring(bDto.bcontents,0,20)}...</a>
-		      	</c:when>
-		      	<c:otherwise>
-						<a href="View.do?bnum=${bDto.bnum}">${bDto.bcontents}</a>
-				</c:otherwise>
-	      	</c:choose>
-	      </td>	
-	      <td>${bDto.memberid}</td>
-	      <td>${bDto.bhit}</td>
-	      <td>${fn:substring(bDto.bdate,0,10)}</td>
+	      <td>${bDto.memberid}</td> <!-- 작성자 -->
+	      <td>${bDto.memberDto.memberemail}</td><!-- 작성자 이메일-->
+	      <td>${bDto.bhit}</td> <!-- 조회수 -->
+	      <td>${fn:substring(bDto.bdate,0,10)}</td> <!-- 작성일 -->
 	    </tr>
 	  </c:forEach>
       </tbody>

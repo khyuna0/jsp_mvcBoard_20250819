@@ -21,7 +21,7 @@
     <nav>
       <ul>
         <li><a href="index.jsp">홈</a></li>
-        <li><a href="List.jsp">게시판</a></li>
+        <li><a href="List.do">게시판</a></li>
       </ul>
     </nav>
   </header>
@@ -38,8 +38,12 @@
     </div>
     <div class="view-buttons">
       <a href="List.do" class="btn">목록</a>
-      <a href="modifyForm.do?bnum=${boardDto.bnum}" class="btn">수정</a>
-      <a href="delete.do?bnum=${boardDto.bnum}" class="btn delete">삭제</a>
+     <c:if test="${sessionScope.sessionId == boardDto.memberid }">
+	     <a href="modifyForm.do?bnum=${boardDto.bnum}" class="btn">수정</a>
+	     <a href="delete.do?bnum=${boardDto.bnum}" class="btn delete">삭제</a>
+      </c:if> 
+
+      
     </div>
   </div>
 </body>

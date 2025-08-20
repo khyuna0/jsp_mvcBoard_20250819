@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.khyuna0.dto.BoardDto;
+//import com.khyuna0.dto.BoardMemberDto;
+import com.khyuna0.dto.MemberDto;
 
 
 public class BoardDao {
@@ -24,35 +26,47 @@ public class BoardDao {
 	
 	public List<BoardDto> boardList() { // 게시판의 모든 글 리스트를 가져와서 반환하는 메서드
 		
-		String sql = "SELECT * FROM board ORDER BY bnum desc";
+		// String sql = "SELECT * FROM board ORDER BY bnum DESC ";
 		
-		List<BoardDto> boardlist = new ArrayList<BoardDto>();
+		// members 테이블과 board 테이블의 join SQL 문
+		String sql = " SELECT B.bnum, B.btitle, B.bcontents, B.memberid, M.memberemail, B.bhit, B.bdate "
+		           + " FROM board AS B "
+		           + " INNER JOIN members AS M ON B.memberid = M.memberid "
+		           + " ORDER BY B.bnum DESC";
 
+		List<BoardDto> boardlist = new ArrayList<BoardDto>();
+		//List<BoardMemberDto> bmList = new ArrayList<BoardMemberDto>();
+		
 		try {
 			Class.forName(drivername); //MySQL 드라이버 클래스 불러오기			
 			conn = DriverManager.getConnection(url, username, password);
-			//커넥션이 메모리 생성(DB와 연결 커넥션 conn 생성)
 			
-			pstmt = conn.prepareStatement(sql); //pstmt 객체 생성(sql 삽입)
+			pstmt = conn.prepareStatement(sql); 
+			
 			rs = pstmt.executeQuery(); 
 			
 			while(rs.next()) { // 성공
 				
-				int bnum = rs.getInt("bnum");	
+				int bnum = rs.getInt("bnum");
 				String btitle = rs.getString("btitle");
 				String bcontents = rs.getString("bcontents");
 				String memberid = rs.getString("memberid");
-				int bhit =rs.getInt("bhit");
-				String bdate = rs.getString("bdate");
+				int bhit = rs.getInt("bhit");
+				String bdate = rs.getString("bdate");				
+				String memberemail = rs.getString("memberemail");
+				
+				MemberDto memberDto = new MemberDto();
+				memberDto.setMemberid(memberid); 
+				memberDto.setMemberemail(memberemail); 
 			
-				BoardDto bDto = new BoardDto(bnum, btitle, bcontents, memberid, bhit, bdate);
+				BoardDto bDto = new BoardDto(bnum, btitle, bcontents, memberid, bhit, bdate, memberDto);
 				boardlist.add(bDto);
 				
 			}
 			
 			
 		} catch (Exception e) {
-			System.out.println("DB 에러 발생!");
+			System.out.println("DB 에러 발생! 게시판 불러오기 실패");
 			e.printStackTrace();
 		} finally { 
 			try {
@@ -219,6 +233,36 @@ public class BoardDao {
 		}
 		
 	}//
-
+	
+	public void updateBhit (String bnum) {
+		String sql = "UPDATE board SET bhit=bhit+1 WHERE bnum = ? "; // 조회수가 1씩 늘어나는 sql 문
+		
+		try {
+			Class.forName(drivername);			
+			conn = DriverManager.getConnection(url, username, password);
+			
+			pstmt = conn.prepareStatement(sql); 
+			pstmt.setString(1, bnum);
+				
+			pstmt.executeUpdate(); 
+			
+		} catch (Exception e) {
+			System.out.println("DB 에러 발생! 조회수 처리 실패!");
+			e.printStackTrace(); 
+		} finally {  
+			try {
+				if(pstmt != null) { 
+					pstmt.close();
+				}				
+				if(conn != null) { 
+					conn.close();
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
 }	
 	 
