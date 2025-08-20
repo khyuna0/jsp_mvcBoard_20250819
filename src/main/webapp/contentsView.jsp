@@ -2,6 +2,12 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
+<%
+	if (request.getAttribute("errorMsg") != null ) { // 웹 서블릿에서 넘겨준 값을 뺄때는 getAttribute 사용
+		out.println("<script>alert('존재하지 않는 글입니다.');window.location.href='List.do';</script>");
+	}
+	
+%>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">

@@ -109,6 +109,7 @@ public class BoardDao {
 	public BoardDto contentView (String bnum) { // 게시판 글 목록에서 유저가 클릭한 글 번호의 글 dto 반환 메서드
 		
 		BoardDto bDto = new BoardDto();
+		bDto = null;
 		String sql = "SELECT * FROM board WHERE bnum = ?";
 		try {
 			Class.forName(drivername);		
@@ -116,7 +117,7 @@ public class BoardDao {
 			
 			pstmt = conn.prepareStatement(sql); 
 			pstmt.setString(1, bnum);
-			rs = pstmt.executeQuery();
+			rs = pstmt.executeQuery(); // 해당 번호글의 레코드 1개 또는 0개 반환
 
 			
 			if(rs.next()) { 
@@ -151,7 +152,7 @@ public class BoardDao {
 			}
 		}
 		
-		return bDto;
+		return bDto; // bDto 값에 따른 처리는 다른 페이지에서
 	}
 
 }

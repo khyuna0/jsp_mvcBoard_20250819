@@ -41,7 +41,7 @@ public class BoardController extends HttpServlet {
 		BoardDao boardDao = new BoardDao();
 		List<BoardDto> bDtos = new ArrayList<BoardDto>();
 
-		if(comm.equals("/boardList.do")) { // 게시판 모든 글 목록 보기 요청
+		if(comm.equals("/List.do")) { // 게시판 모든 글 목록 보기 요청
 			bDtos = boardDao.boardList();
 			request.setAttribute("bDtos", bDtos);
 			viewPage = "boardList.jsp";	
@@ -50,13 +50,23 @@ public class BoardController extends HttpServlet {
 		} else if (comm.equals("/modifyForm.do")) { // 글 수정
 			viewPage = "modifyForm.jsp";
 		} else if (comm.equals("/delete.do")) { // 글 삭제 후 글 목록 이동
-			viewPage = "boardList.do";
+			viewPage = "List.do";
 		} else if (comm.equals("/View.do")) { // 글 목록에서 선택된 글 목록 내용이 보여지는 페이지로 이동
 			String bnum = request.getParameter("bnum");
 			BoardDto boardDto = boardDao.contentView(bnum);
-			request.setAttribute("boardDto", boardDto);
-			viewPage = "contentsView.jsp";
+			//System.out.println(boardDto);
+			
+			if (boardDto != null ) {
+				request.setAttribute("boardDto", boardDto);
+				viewPage = "contentsView.jsp"; 
+			} else {
+				request.setAttribute("errorMsg", 1);
+				viewPage = "contentsView.jsp"; 
+			}
+			
+				
 		} else if (comm.equals("/writeOk.do")) {
+			
 			request.setCharacterEncoding("utf-8");
 			
 			String btitle = request.getParameter("title");
@@ -64,7 +74,8 @@ public class BoardController extends HttpServlet {
 			String memberid = request.getParameter("writer");
 			
 			boardDao.boardWrite(btitle,bcontents,memberid, 0);
-			viewPage = "boardList.do";
+			
+			viewPage = "List.do";
 		} else {
 			viewPage = "index.jsp";
 		}
