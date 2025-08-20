@@ -6,11 +6,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.khyuna0.dao.BoardDao;
+import com.khyuna0.dao.MemberDao;
 import com.khyuna0.dto.BoardDto;
 
 
@@ -39,18 +42,66 @@ public class BoardController extends HttpServlet {
 		String viewPage = null;
 		
 		BoardDao boardDao = new BoardDao();
+		MemberDao memberDao = new MemberDao();
+		HttpSession session = null;
+		
 		List<BoardDto> bDtos = new ArrayList<BoardDto>();
-
-		if(comm.equals("/List.do")) { // 게시판 모든 글 목록 보기 요청
+		if (comm.equals("/login.do")) { // 로그인
+			viewPage = "login.jsp";
+		}else if(comm.equals("/loginOk.do")) {	
+			request.setCharacterEncoding("utf-8");
+			String loginId = request.getParameter("memberid");
+			String loginPw = request.getParameter("memberpw");
+			int loginFlag = memberDao.loginCheck(loginId, loginPw);
+			// loginResult = 1 -> 로그인 성공
+			if (loginFlag == 1) {
+				session = request.getSession();
+				session.setAttribute("sessionId", loginId);
+			} else {
+				response.sendRedirect("login.do?msg=1");
+				return;
+			}
+			viewPage = "List.do";
+		}else if(comm.equals("/List.do")) { // 게시판 모든 글 목록 보기 요청
 			bDtos = boardDao.boardList();
 			request.setAttribute("bDtos", bDtos);
 			viewPage = "boardList.jsp";	
 		} else if (comm.equals("/boardWrite.do")) { // 게시판 글쓰기
-			viewPage = "boardWrite.jsp";
+			session = request.getSession();
+			String sid = (String) session.getAttribute("sessionId");
+			if ( sid != null ) {
+				viewPage = "boardWrite.jsp";
+			} else {
+				response.sendRedirect("login.do?msg=2");
+				return;
+			}
+			
 		} else if (comm.equals("/modifyForm.do")) { // 글 수정
+			String bnum = request.getParameter("bnum"); // 수정하려고 하는 글의 글번호 가져옴
+			
+			BoardDto boardDto = boardDao.contentView(bnum); 
+			request.setAttribute("boardDto", boardDto);
 			viewPage = "modifyForm.jsp";
+		} else if (comm.equals("/modifyOk.do")) { // 글 수정 한 후 글 리스트로 이동하기
+			request.setCharacterEncoding("utf-8");
+			
+			String bnum = request.getParameter("bnum"); // 수정할 글 번호
+			String btitle = request.getParameter("title"); // 수정할 글 제목
+			String bcontents = request.getParameter("content"); // 내용
+			//String memberid = request.getParameter("writer"); // 작성자
+			
+			boardDao.boardUpdate(bnum, btitle, bcontents);
+
+			//viewPage = "List.do";
+			viewPage = "View.do";
+			
 		} else if (comm.equals("/delete.do")) { // 글 삭제 후 글 목록 이동
+			
+			request.setCharacterEncoding("utf-8");
+			String bnum = request.getParameter("bnum"); // 삭제할 글 번호
+			boardDao.boardDelete(bnum); 
 			viewPage = "List.do";
+			
 		} else if (comm.equals("/View.do")) { // 글 목록에서 선택된 글 목록 내용이 보여지는 페이지로 이동
 			String bnum = request.getParameter("bnum");
 			BoardDto boardDto = boardDao.contentView(bnum);
@@ -58,12 +109,14 @@ public class BoardController extends HttpServlet {
 			
 			if (boardDto != null ) {
 				request.setAttribute("boardDto", boardDto);
-				viewPage = "contentsView.jsp"; 
+				
 			} else {
-				request.setAttribute("errorMsg", "존재하지 않는 페이지입니다.");
-				viewPage = "contentsView.jsp"; 
+				request.setAttribute("errorMsg", "존재하지 않는 글입니다."); 
+				
+				// response.sendRedirect("contentsView.jsp?msg=1"); -> (다른 방법) 페이지 강제이동과 함께 파라미터 값 넘기기 
+				// 강제이동된 페이지에서 getParameter ~ ... != null
 			}
-			
+			viewPage = "contentsView.jsp"; 
 				
 		} else if (comm.equals("/writeOk.do")) {
 			

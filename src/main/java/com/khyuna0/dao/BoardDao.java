@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.khyuna0.dto.BoardDto;
 
+
 public class BoardDao {
 
 	private String drivername = "com.mysql.jdbc.Driver"; 
@@ -154,6 +155,70 @@ public class BoardDao {
 		
 		return bDto; // bDto 값에 따른 처리는 다른 페이지에서
 	}
+	
+	public void boardUpdate (String bnum, String btitle, String bcontents) {
+		
+		String sql = "UPDATE board SET btitle = ?, bcontents = ? WHERE bnum = ?";
+		
+		try {
+			Class.forName(drivername);			
+			conn = DriverManager.getConnection(url, username, password);
+			
+			pstmt = conn.prepareStatement(sql); 
+			pstmt.setString(1, btitle);
+			pstmt.setString(2, bcontents);
+			pstmt.setString(3, bnum);
+				
+			pstmt.executeUpdate(); 
+			
+		} catch (Exception e) {
+			System.out.println("DB 에러 발생! 글 수정 실패!");
+			e.printStackTrace(); 
+		} finally {  
+			try {
+				if(pstmt != null) { 
+					pstmt.close();
+				}				
+				if(conn != null) { 
+					conn.close();
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+	} // 
+	
+	public void boardDelete(String bnum) {
+		
+		String sql = "DELETE FROM board WHERE bnum = ?";
+		
+		try {
+			Class.forName(drivername);			
+			conn = DriverManager.getConnection(url, username, password);
+			
+			pstmt = conn.prepareStatement(sql); 
+			pstmt.setString(1, bnum);
+				
+			pstmt.executeUpdate(); 
+			
+		} catch (Exception e) {
+			System.out.println("DB 에러 발생! 글 삭제 실패!");
+			e.printStackTrace(); 
+		} finally {  
+			try {
+				if(pstmt != null) { 
+					pstmt.close();
+				}				
+				if(conn != null) { 
+					conn.close();
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}//
 
-}
+}	
 	 

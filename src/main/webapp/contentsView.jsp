@@ -38,8 +38,8 @@
     </div>
     <div class="view-buttons">
       <a href="List.do" class="btn">목록</a>
-      <a href="modyfiForm.do" class="btn">수정</a>
-      <a href="#" class="btn delete">삭제</a>
+      <a href="modifyForm.do?bnum=${boardDto.bnum}" class="btn">수정</a>
+      <a href="delete.do?bnum=${boardDto.bnum}" class="btn delete">삭제</a>
     </div>
   </div>
 </body>

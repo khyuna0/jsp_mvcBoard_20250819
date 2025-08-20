@@ -16,9 +16,9 @@
     <nav>
       <ul>
         <li><a href="index.jsp">홈</a></li>
-        <li><a href="#">안내</a></li>
-        <li><a href="#">공지사항</a></li>
-        <li><a href="boardList.do">게시판</a></li>
+        <li><a href="List.do">게시판</a></li>
+        <li><a href="memberJoin.do">회원가입</a></li>
+        <li><a href="login.do">로그인</a></li>
       </ul>
     </nav>
   </header>
@@ -32,7 +32,11 @@
   <!-- 게시판 목록 -->
   <section id="board" class="board-container">
     <h1>게시판</h1>
-
+	<span>
+		<c:if test="${not empty sessionScope.sessionId }">
+			${sessionScope.sessionId} 님 로그인 중
+		</c:if>
+	</span>
     <!-- 상단 버튼 -->
     <div class="board-header">
 	  <a href="boardWrite.do" class="btn-write">글쓰기</a>

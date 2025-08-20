@@ -30,7 +30,7 @@
       </div>
       <div class="form-group">
         <label for="writer">작성자 아이디</label>
-        <input type="text" id="writer" name="writer" required>
+        <input type="text" id="writer" name="writer" value="${sessionScope.sessionId }" required readonly="readonly">
       </div>
       <div class="form-buttons">
         <button type="submit" class="btn">등록</button>
