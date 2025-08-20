@@ -16,9 +16,7 @@ import com.khyuna0.dto.BoardDto;
 
 @WebServlet("*.do")
 public class BoardController extends HttpServlet {
-     
-	
-	
+
     public BoardController() {
         super();
        
@@ -53,7 +51,7 @@ public class BoardController extends HttpServlet {
 			viewPage = "modifyForm.jsp";
 		} else if (comm.equals("/delete.do")) { // 글 삭제 후 글 목록 이동
 			viewPage = "boardList.do";
-		} else if (comm.equals("/contentsView.do")) { // 글 목록에서 선택된 글 목록 내용이 보여지는 페이지로 이동
+		} else if (comm.equals("/View.do")) { // 글 목록에서 선택된 글 목록 내용이 보여지는 페이지로 이동
 			String bnum = request.getParameter("bnum");
 			BoardDto boardDto = boardDao.contentView(bnum);
 			request.setAttribute("boardDto", boardDto);
@@ -67,13 +65,14 @@ public class BoardController extends HttpServlet {
 			
 			boardDao.boardWrite(btitle,bcontents,memberid, 0);
 			viewPage = "boardList.do";
+		} else {
+			viewPage = "index.jsp";
 		}
 
 		// ↓ boardList.jsp 에게 웹 서블릿에서 제작한 request 객체를 전달한 후 뷰페이지로 포워딩 하는 코드
 		RequestDispatcher dispatcher = request.getRequestDispatcher(viewPage); 
 		dispatcher.forward(request, response);
 
-		
 		
 	}
 	

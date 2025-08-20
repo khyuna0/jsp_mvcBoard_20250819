@@ -117,10 +117,7 @@ public class BoardDao {
 			pstmt = conn.prepareStatement(sql); 
 			pstmt.setString(1, bnum);
 			rs = pstmt.executeQuery();
-			
-			
-			
-			
+
 			
 			if(rs.next()) { 
 				

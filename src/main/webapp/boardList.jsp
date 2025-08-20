@@ -59,20 +59,20 @@
 	      <td>
 	      	<c:choose>
 		      	<c:when test="${fn:length(bDto.btitle) > 10}">
-		      	<a href="contentsView.do?bnum=${bDto.bnum}">${fn:substring(bDto.btitle,0,10)}...</a>
+		      	<a href="View.do?bnum=${bDto.bnum}">${fn:substring(bDto.btitle,0,10)}...</a>
 		      	</c:when>
 		      	<c:otherwise>
-						<a href="contentsView.do?bnum=${bDto.bnum}">${bDto.btitle}</a>
+						<a href="View.do?bnum=${bDto.bnum}">${bDto.btitle}</a>
 				</c:otherwise>
 	      	</c:choose>
 	      </td>
 	      <td>
 	      <c:choose>
 		      	<c:when test="${fn:length(bDto.bcontents) > 20}">
-		      	<a href="contentsView.do?bnum=${bDto.bnum}">${fn:substring(bDto.bcontents,0,20)}...</a>
+		      	<a href="View.do?bnum=${bDto.bnum}">${fn:substring(bDto.bcontents,0,20)}...</a>
 		      	</c:when>
 		      	<c:otherwise>
-						<a href="contentsView.do?bnum=${bDto.bnum}">${bDto.bcontents}</a>
+						<a href="View.do?bnum=${bDto.bnum}">${bDto.bcontents}</a>
 				</c:otherwise>
 	      	</c:choose>
 	      </td>	

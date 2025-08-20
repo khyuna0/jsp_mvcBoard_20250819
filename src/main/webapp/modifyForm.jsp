@@ -12,7 +12,7 @@
     <nav>
       <ul>
         <li><a href="index.jsp">홈</a></li>
-        <li><a href="boardList.jsp">게시판</a></li>
+        <li><a href="List.jsp">게시판</a></li>
       </ul>
     </nav>
   </header>

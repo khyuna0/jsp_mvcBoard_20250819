@@ -15,7 +15,7 @@
         <li><a href="index.jsp">홈</a></li>
         <li><a href="#">안내</a></li>
         <li><a href="#">공지사항</a></li>
-        <li><a href="boardList.do">게시판</a></li>
+        <li><a href="List.do">게시판</a></li>
       </ul>
     </nav>
   </header>
@@ -46,7 +46,7 @@
       <tbody>
         <tr>
           <td>1</td>
-          <td class="title"><a href="contentsView.jsp">테스트 글 제목</a></td>
+          <td class="title"><a href="View.jsp">테스트 글 제목</a></td>
           <td>내용 미리보기</td>
           <td>user01</td>
           <td>12</td>

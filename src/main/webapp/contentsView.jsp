@@ -14,7 +14,7 @@
     <nav>
       <ul>
         <li><a href="index.jsp">홈</a></li>
-        <li><a href="boardList.jsp">게시판</a></li>
+        <li><a href="List.jsp">게시판</a></li>
       </ul>
     </nav>
   </header>
@@ -30,7 +30,7 @@
       <p>${boardDto.bcontents }.</p>
     </div>
     <div class="view-buttons">
-      <a href="boardList.do" class="btn">목록</a>
+      <a href="List.do" class="btn">목록</a>
       <a href="modyfiForm.do" class="btn">수정</a>
       <a href="#" class="btn delete">삭제</a>
     </div>
