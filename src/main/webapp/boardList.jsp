@@ -65,7 +65,6 @@
         </tr>
       </thead>
       <tbody>
-       	<tbody>
 	  <c:forEach items="${bDtos}" var="bDto" >
 	    <tr>
 	      <td>${bDto.bno}</td> <!-- 글번호 -->

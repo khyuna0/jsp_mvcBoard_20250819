@@ -72,40 +72,54 @@ public class BoardController extends HttpServlet {
 			
 		// 게시판 모든 글 목록 보기 요청	
 		}else if(comm.equals("/List.do")) { 
-			int page = 1;
-			int totalBoardCount = boardDao.countBoard();
-			int totalPage = (int) Math.ceil((double) totalBoardCount / BoardDao.PAGE_SIZE);
-			int startPage = (((page - 1)/BoardDao.PAGE_GROUP_SIZE) * BoardDao.PAGE_GROUP_SIZE ) +1;
-			int endPage = startPage + BoardDao.PAGE_GROUP_SIZE - 1;
-			
-			
-			if (request.getParameter("page") == null ) { // 참이면 링크타고 들어옴
-				page = 1;
-			} else { // 유저가 보고싶은 페이지 번호를 클릭함
-				page = Integer.parseInt(request.getParameter("page"));
-			}
-			
-			String searchType = request.getParameter("searchType");
-			String searchKeyword = request.getParameter("searchKeyword");
-			
-			if( searchType != null && searchKeyword != null && !searchKeyword.strip().isEmpty()) { // 유저가 검색 결과 리스트 원함
-				totalBoardCount = boardDto.getBno();
-				totalPage = (int) Math.ceil((double) totalBoardCount / BoardDao.PAGE_SIZE);
-				
-				bDtos = boardDao.SearchBoardList(page, searchType ,searchKeyword);
-			} else { // 모든 게시판 글 리스트 원함
-				bDtos = boardDao.boardList(page);
-			}
-			request.setAttribute("bDtos", bDtos);
-			request.setAttribute("currentPage", page); // 유저가 현재 선택한 페이지 번호
-			request.setAttribute("totalPage", totalPage); // 총 글의 갯수로 표현될 전체 페이지의 수 (글이 37개면 4가 전달)
-			
-			request.setAttribute("startPage", startPage);
-			request.setAttribute("endPage", endPage);
-			
-			
-			
-			viewPage = "boardList.jsp";	
+		    int page = 1;
+		    
+		    String p = request.getParameter("page");
+		    if (p != null && !p.isBlank()) { // 유저가 보고싶은 페이지 번호를 클릭함
+		        page = Integer.parseInt(p);
+		    } else { // 참이면 링크타고 들어옴
+		        page = 1;
+		    }
+
+		    String searchType = request.getParameter("searchType");
+		    String searchKeyword = request.getParameter("searchKeyword");
+		    String kw = (searchKeyword == null) ? "" : searchKeyword.strip();
+
+		    int totalBoardCount;
+		    if (searchType != null && searchKeyword != null && !kw.isEmpty()) { // 유저가 검색 결과 리스트 원함
+
+		        totalBoardCount = boardDao.countBoard(); // ← 임시 대체. DAO에 검색용 count 추가하면 교체.
+		    } else {
+		        totalBoardCount = boardDao.countBoard();
+		    }
+
+		
+		    int totalPage = (int) Math.ceil((double) totalBoardCount / BoardDao.PAGE_SIZE);
+		    if (totalPage <= 0) totalPage = 1;
+		    if (page < 1) page = 1;
+		    if (page > totalPage) page = totalPage;
+
+		    
+		    int startPage = (((page - 1) / BoardDao.PAGE_GROUP_SIZE) * BoardDao.PAGE_GROUP_SIZE) + 1;
+		    int endPage = startPage + BoardDao.PAGE_GROUP_SIZE - 1;
+		    if (endPage > totalPage) endPage = totalPage;
+
+		    
+		    if (searchType != null && searchKeyword != null && !kw.isEmpty()) { // 유저가 검색 결과 리스트 원함
+		        bDtos = boardDao.SearchBoardList(page, searchType, kw);
+		    } else { // 모든 게시판 글 리스트 원함
+		        bDtos = boardDao.boardList(page);
+		    }
+
+		    
+		    request.setAttribute("bDtos", bDtos);
+		    request.setAttribute("currentPage", page);       // 유저가 현재 선택한 페이지 번호
+		    request.setAttribute("totalPage", totalPage);    // 총 글의 갯수로 표현될 전체 페이지의 수 (글이 37개면 4가 전달)
+		    request.setAttribute("startPage", startPage);
+		    request.setAttribute("endPage", endPage);
+
+		    viewPage = "boardList.jsp"; 
+	
 		// 게시판 글쓰기	
 		} else if (comm.equals("/boardWrite.do")) { 
 			session = request.getSession();
