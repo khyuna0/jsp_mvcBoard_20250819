@@ -23,18 +23,20 @@ public class BoardDao {
 	PreparedStatement pstmt = null;
 	ResultSet rs = null;
 	
+	public static final int PAGE_SIZE = 10;
+	public static final int PAGE_GROUP_SIZE = 10;
 	
-	public List<BoardDto> boardList() { // 게시판의 모든 글 리스트를 가져와서 반환하는 메서드
-		
-		// String sql = "SELECT * FROM board ORDER BY bnum DESC ";
-		
+	public List<BoardDto> boardList(int page) { // 게시판의 모든 글 리스트를 가져와서 반환하는 메서드
+
 		// members 테이블과 board 테이블의 join SQL 문
 		String sql =  " SELECT ROW_NUMBER() OVER (ORDER BY bnum ASC) AS bno,"
 					+ " B.bnum, B.btitle, B.bcontents, B.memberid, M.memberemail, B.bhit, B.bdate "
 		            + " FROM board AS B "
 		            + " INNER JOIN members AS M ON B.memberid = M.memberid "
-		            + " ORDER BY bno DESC";
-
+		            + " ORDER BY bno DESC"
+		            + " LIMIT ? OFFSET ?";
+		
+		int offset = ( page - 1 ) * PAGE_SIZE;
 		List<BoardDto> boardlist = new ArrayList<BoardDto>();
 		//List<BoardMemberDto> bmList = new ArrayList<BoardMemberDto>();
 		
@@ -43,7 +45,8 @@ public class BoardDao {
 			conn = DriverManager.getConnection(url, username, password);
 			
 			pstmt = conn.prepareStatement(sql); 
-			
+			pstmt.setInt(1, PAGE_SIZE);
+			pstmt.setInt(2, offset);
 			rs = pstmt.executeQuery(); 
 			
 			while(rs.next()) { // 성공
@@ -90,7 +93,8 @@ public class BoardDao {
 		return boardlist; // 글들(bDto)이 담긴 boardlist 리스트 반환
 	}
 	
-public List<BoardDto> SearchBoardList(String searchType, String searchKeyword) { // 게시판의 모든 글 리스트를 가져와서 반환하는 메서드
+	// 게시판의 모든 글 리스트를 가져와서 반환하는 메서드
+	public List<BoardDto> SearchBoardList(int page, String searchType, String searchKeyword) { 
 		
 		// String sql = "SELECT * FROM board ORDER BY bnum DESC ";
 		
@@ -100,9 +104,11 @@ public List<BoardDto> SearchBoardList(String searchType, String searchKeyword) {
 		            + " FROM board AS B "
 		            + " INNER JOIN members AS M ON B.memberid = M.memberid "
 		            + " WHERE " + searchType + " LIKE ? "
-		            + " ORDER BY bno DESC";
+		            + " ORDER BY bno DESC "
+		            + " LIMIT ? OFFSET ? ";
 
 		List<BoardDto> boardlist = new ArrayList<BoardDto>();
+		int offset = ( page - 1 ) * PAGE_SIZE;
 		//List<BoardMemberDto> bmList = new ArrayList<BoardMemberDto>();
 		
 		try {
@@ -110,11 +116,10 @@ public List<BoardDto> SearchBoardList(String searchType, String searchKeyword) {
 			conn = DriverManager.getConnection(url, username, password);
 			
 			pstmt = conn.prepareStatement(sql); 
-			
-			
-			
+
 			pstmt.setString(1, "%" + searchKeyword + "%");
-			
+			pstmt.setInt(2, PAGE_SIZE);
+			pstmt.setInt(3, offset);
 			rs = pstmt.executeQuery(); 
 			
 			while(rs.next()) { // 성공
@@ -161,7 +166,44 @@ public List<BoardDto> SearchBoardList(String searchType, String searchKeyword) {
 		return boardlist; // 글들(bDto)이 담긴 boardlist 리스트 반환
 	}//
 	
-	
+	// 게시판의 모든 글 개수 
+	public int countBoard () {
+		String sql = "SELECT * FROM board";
+		int count = 0;
+		
+		try {
+			Class.forName(drivername); //MySQL 드라이버 클래스 불러오기			
+			conn = DriverManager.getConnection(url, username, password);
+			
+			pstmt = conn.prepareStatement(sql); 		
+			rs = pstmt.executeQuery(); 
+			
+			while(rs.next()) {
+				count++;
+			}	
+			
+		} catch (Exception e) {
+			System.out.println("DB 에러 발생! 게시판 목록 가져오기 실패!");
+			e.printStackTrace(); 
+		} finally { //에러의 발생여부와 상관 없이 Connection 닫기 실행 
+			try {
+				if(rs != null) { //rs가 null 이 아니면 닫기(pstmt 닫기 보다 먼저 실행)
+					rs.close();
+				}				
+				if(pstmt != null) { //stmt가 null 이 아니면 닫기(conn 닫기 보다 먼저 실행)
+					pstmt.close();
+				}				
+				if(conn != null) { //Connection이 null 이 아닐 때만 닫기
+					conn.close();
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return count;
+	}//
+
+
 	public void boardWrite (String btitle, String bcontents, String memberid, int bhit) { // 게시판 글쓰기
 		
 		String sql = "INSERT INTO board(btitle, bcontents, memberid, bhit) VALUES (?,?,?,0)";

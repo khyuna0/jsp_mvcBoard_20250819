@@ -46,6 +46,7 @@ public class BoardController extends HttpServlet {
 		MemberDao memberDao = new MemberDao();
 		HttpSession session = null;
 		
+		BoardDto boardDto = new BoardDto();
 		List<BoardDto> bDtos = new ArrayList<BoardDto>();
 		List<BoardMemberDto> bmDtos = new ArrayList<BoardMemberDto>();
 		
@@ -71,15 +72,39 @@ public class BoardController extends HttpServlet {
 			
 		// 게시판 모든 글 목록 보기 요청	
 		}else if(comm.equals("/List.do")) { 
+			int page = 1;
+			int totalBoardCount = boardDao.countBoard();
+			int totalPage = (int) Math.ceil((double) totalBoardCount / BoardDao.PAGE_SIZE);
+			int startPage = (((page - 1)/BoardDao.PAGE_GROUP_SIZE) * BoardDao.PAGE_GROUP_SIZE ) +1;
+			int endPage = startPage + BoardDao.PAGE_GROUP_SIZE - 1;
+			
+			
+			if (request.getParameter("page") == null ) { // 참이면 링크타고 들어옴
+				page = 1;
+			} else { // 유저가 보고싶은 페이지 번호를 클릭함
+				page = Integer.parseInt(request.getParameter("page"));
+			}
+			
 			String searchType = request.getParameter("searchType");
 			String searchKeyword = request.getParameter("searchKeyword");
 			
 			if( searchType != null && searchKeyword != null && !searchKeyword.strip().isEmpty()) { // 유저가 검색 결과 리스트 원함
-				bDtos = boardDao.SearchBoardList(searchType ,searchKeyword);
+				totalBoardCount = boardDto.getBno();
+				totalPage = (int) Math.ceil((double) totalBoardCount / BoardDao.PAGE_SIZE);
+				
+				bDtos = boardDao.SearchBoardList(page, searchType ,searchKeyword);
 			} else { // 모든 게시판 글 리스트 원함
-				bDtos = boardDao.boardList();
+				bDtos = boardDao.boardList(page);
 			}
 			request.setAttribute("bDtos", bDtos);
+			request.setAttribute("currentPage", page); // 유저가 현재 선택한 페이지 번호
+			request.setAttribute("totalPage", totalPage); // 총 글의 갯수로 표현될 전체 페이지의 수 (글이 37개면 4가 전달)
+			
+			request.setAttribute("startPage", startPage);
+			request.setAttribute("endPage", endPage);
+			
+			
+			
 			viewPage = "boardList.jsp";	
 		// 게시판 글쓰기	
 		} else if (comm.equals("/boardWrite.do")) { 
@@ -94,7 +119,7 @@ public class BoardController extends HttpServlet {
 		// 글 수정	
 		} else if (comm.equals("/modifyForm.do")) { 
 			String bnum = request.getParameter("bnum"); // 수정하려고 하는 글의 글번호 가져옴
-			BoardDto boardDto = boardDao.contentView(bnum);
+			boardDto = boardDao.contentView(bnum);
 			request.setAttribute("boardDto", boardDto);
 
 			viewPage = "modifyForm.jsp";
@@ -124,7 +149,7 @@ public class BoardController extends HttpServlet {
 			String bnum = request.getParameter("bnum");
 			// 조회수
 			boardDao.updateBhit(bnum);
-			BoardDto boardDto = boardDao.contentView(bnum);
+			boardDto = boardDao.contentView(bnum);
 			//System.out.println(boardDto);
 			
 			if (boardDto != null ) {

@@ -90,11 +90,36 @@
 
     <!-- 페이지네이션 -->
     <div class="pagination">
-      <a href="#">&laquo;</a>
-      <a href="#" class="active">1</a>
-      <a href="#">2</a>
-      <a href="#">3</a>
-      <a href="#">&raquo;</a>
+    <!-- 맨 처음 글로 이동 -->
+    <c:if test="${currentPage > 1 }">
+      <a href="List.do?page=${1 }">&laquo;</a>
+    </c:if>  
+    <!-- 이전 페이지 그룹으로 이동 -->
+    <c:if test="${startPage > 1 }">
+      <a href="List.do?page=${startPage -1 }">&lt;</a>
+    </c:if>  
+    
+      	<c:forEach begin="${startPage }" end="${endPage }" var="i"> 
+      		<c:choose>
+		      	<c:when test="${i == currentPage }"> 
+		      		<a href="List.do?page=${i}" class="active"><b style="color: navy;">${i}</b></a>
+		      	</c:when>
+		      	<c:otherwise>
+		      		<a href="List.do?page=${i}" class="active">${i}</a>
+		      	</c:otherwise>	
+		    </c:choose>  	
+      	</c:forEach>	
+
+    <!-- 다음 페이지 그룹으로 이동 -->
+    <c:if test="${endPage < totalPage }">
+      <a href="List.do?page=${endPage +1 }">&gt;</a>
+    </c:if> 
+    
+      	 <!-- 맨 마지막 글로 이동 -->
+    <c:if test="${currentPage < totalPage }">
+      <a href="List.do?page=${totalPage}">&raquo;</a>
+    </c:if>
+      
     </div>
   </section>
 </body>
