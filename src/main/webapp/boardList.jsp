@@ -41,6 +41,16 @@
     <div class="board-header">
 	  <a href="boardWrite.do" class="btn-write">글쓰기</a>
 	</div>
+	<!-- 게시판 글 검색창 -->
+    <form action="List.do" method="get">
+    	<select name="searchType">
+    		<option value="btitle">제목</option>
+    		<option value="bcontents">내용</option>
+    		<option value="B.memberid">작성자</option>
+    	</select>
+    	<input type="text" name="searchKeyword" placeholder="검색어 입력">
+    	<input type="submit" value="검색">
+    </form>
     
     <!-- 목록 테이블 -->
     <table class="board-table">
@@ -56,9 +66,9 @@
       </thead>
       <tbody>
        	<tbody>
-	  <c:forEach items="${bDtos}" var="bDto">
+	  <c:forEach items="${bDtos}" var="bDto" >
 	    <tr>
-	      <td>${bDto.bnum}</td> <!-- 글번호 -->
+	      <td>${bDto.bno}</td> <!-- 글번호 -->
 	      <td>
 	      	<c:choose>
 		      	<c:when test="${fn:length(bDto.btitle) > 10}"> <!-- 글제목 -->

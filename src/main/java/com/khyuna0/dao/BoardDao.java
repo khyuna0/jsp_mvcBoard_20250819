@@ -29,10 +29,11 @@ public class BoardDao {
 		// String sql = "SELECT * FROM board ORDER BY bnum DESC ";
 		
 		// members 테이블과 board 테이블의 join SQL 문
-		String sql = " SELECT B.bnum, B.btitle, B.bcontents, B.memberid, M.memberemail, B.bhit, B.bdate "
-		           + " FROM board AS B "
-		           + " INNER JOIN members AS M ON B.memberid = M.memberid "
-		           + " ORDER BY B.bnum DESC";
+		String sql =  " SELECT ROW_NUMBER() OVER (ORDER BY bnum ASC) AS bno,"
+					+ " B.bnum, B.btitle, B.bcontents, B.memberid, M.memberemail, B.bhit, B.bdate "
+		            + " FROM board AS B "
+		            + " INNER JOIN members AS M ON B.memberid = M.memberid "
+		            + " ORDER BY bno DESC";
 
 		List<BoardDto> boardlist = new ArrayList<BoardDto>();
 		//List<BoardMemberDto> bmList = new ArrayList<BoardMemberDto>();
@@ -52,14 +53,16 @@ public class BoardDao {
 				String bcontents = rs.getString("bcontents");
 				String memberid = rs.getString("memberid");
 				int bhit = rs.getInt("bhit");
-				String bdate = rs.getString("bdate");				
+				String bdate = rs.getString("bdate");			
+				
+				int bno = rs.getInt("bno");
 				String memberemail = rs.getString("memberemail");
 				
 				MemberDto memberDto = new MemberDto();
 				memberDto.setMemberid(memberid); 
 				memberDto.setMemberemail(memberemail); 
 			
-				BoardDto bDto = new BoardDto(bnum, btitle, bcontents, memberid, bhit, bdate, memberDto);
+				BoardDto bDto = new BoardDto(bno ,bnum, btitle, bcontents, memberid, bhit, bdate, memberDto);
 				boardlist.add(bDto);
 				
 			}
@@ -86,6 +89,78 @@ public class BoardDao {
 		
 		return boardlist; // 글들(bDto)이 담긴 boardlist 리스트 반환
 	}
+	
+public List<BoardDto> SearchBoardList(String searchType, String searchKeyword) { // 게시판의 모든 글 리스트를 가져와서 반환하는 메서드
+		
+		// String sql = "SELECT * FROM board ORDER BY bnum DESC ";
+		
+		// members 테이블과 board 테이블의 join SQL 문
+		String sql =  " SELECT ROW_NUMBER() OVER (ORDER BY bnum ASC) AS bno,"
+					+ " B.bnum, B.btitle, B.bcontents, B.memberid, M.memberemail, B.bhit, B.bdate "
+		            + " FROM board AS B "
+		            + " INNER JOIN members AS M ON B.memberid = M.memberid "
+		            + " WHERE " + searchType + " LIKE ? "
+		            + " ORDER BY bno DESC";
+
+		List<BoardDto> boardlist = new ArrayList<BoardDto>();
+		//List<BoardMemberDto> bmList = new ArrayList<BoardMemberDto>();
+		
+		try {
+			Class.forName(drivername); //MySQL 드라이버 클래스 불러오기			
+			conn = DriverManager.getConnection(url, username, password);
+			
+			pstmt = conn.prepareStatement(sql); 
+			
+			
+			
+			pstmt.setString(1, "%" + searchKeyword + "%");
+			
+			rs = pstmt.executeQuery(); 
+			
+			while(rs.next()) { // 성공
+				
+				int bnum = rs.getInt("bnum");
+				String btitle = rs.getString("btitle");
+				String bcontents = rs.getString("bcontents");
+				String memberid = rs.getString("memberid");
+				int bhit = rs.getInt("bhit");
+				String bdate = rs.getString("bdate");			
+				
+				int bno = rs.getInt("bno");
+				String memberemail = rs.getString("memberemail");
+				
+				MemberDto memberDto = new MemberDto();
+				memberDto.setMemberid(memberid); 
+				memberDto.setMemberemail(memberemail); 
+			
+				BoardDto bDto = new BoardDto(bno ,bnum, btitle, bcontents, memberid, bhit, bdate, memberDto);
+				boardlist.add(bDto);
+				
+			}
+			
+			
+		} catch (Exception e) {
+			System.out.println("DB 에러 발생! 게시판 불러오기 실패");
+			e.printStackTrace();
+		} finally { 
+			try {
+				if(rs != null) { 
+					rs.close();
+				}				
+				if(pstmt != null) { 
+					pstmt.close();
+				}				
+				if(conn != null) { 
+					conn.close();
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return boardlist; // 글들(bDto)이 담긴 boardlist 리스트 반환
+	}//
+	
 	
 	public void boardWrite (String btitle, String bcontents, String memberid, int bhit) { // 게시판 글쓰기
 		
@@ -125,7 +200,10 @@ public class BoardDao {
 		
 		BoardDto bDto = new BoardDto();
 		bDto = null;
-		String sql = "SELECT * FROM board WHERE bnum = ?";
+		String sql =  " SELECT * FROM board AS B "
+	            	+ " INNER JOIN members AS M ON B.memberid = M.memberid "
+	            	+ " WHERE bnum = ?";
+		// join 해서 email 까지 같이 표시함
 		try {
 			Class.forName(drivername);		
 			conn = DriverManager.getConnection(url, username, password);
@@ -144,12 +222,17 @@ public class BoardDao {
 				int bhit =rs.getInt("bhit");
 				String bdate = rs.getString("bdate");
 				
-				bDto = new BoardDto(contentNum, btitle, bcontents, memberid, bhit, bdate);
+				String memberemail = rs.getString("memberemail");
+				
+				MemberDto memberDto = new MemberDto();
+				memberDto.setMemberid(memberid);
+				memberDto.setMemberemail(memberemail);
+				bDto = new BoardDto(contentNum, btitle, bcontents, memberid, bhit, bdate, memberDto);
 				
 			} 
 
 		} catch (Exception e) {
-			System.out.println("DB 에러 발생!");
+			System.out.println("DB 에러 발생! 글 보기 에러");
 			e.printStackTrace();
 		} finally { 
 			try {

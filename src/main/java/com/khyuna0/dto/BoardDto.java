@@ -2,6 +2,7 @@ package com.khyuna0.dto;
 
 public class BoardDto {
 	
+	private int bno; // 새로운 글 게시판 번호
 	private int bnum; // 게시판 글 번호
 	private String btitle; 
 	private String bcontents;
@@ -16,9 +17,10 @@ public class BoardDto {
 		// TODO Auto-generated constructor stub		
 	}
 
-	public BoardDto(int bnum, String btitle, String bcontents, String memberid, int bhit, String bdate,
+	public BoardDto(int bno, int bnum, String btitle, String bcontents, String memberid, int bhit, String bdate,
 			MemberDto memberDto) {
 		super();
+		this.bno = bno;
 		this.bnum = bnum;
 		this.btitle = btitle;
 		this.bcontents = bcontents;
@@ -27,7 +29,7 @@ public class BoardDto {
 		this.bdate = bdate;
 		this.memberDto = memberDto;
 	}
-	// memberDto 제외
+	
 	public BoardDto(int bnum, String btitle, String bcontents, String memberid, int bhit, String bdate
 			) {
 		super();
@@ -38,6 +40,27 @@ public class BoardDto {
 		this.bhit = bhit;
 		this.bdate = bdate;
 
+	}
+	
+	public BoardDto(int bnum, String btitle, String bcontents, String memberid, int bhit, String bdate,
+			MemberDto memberDto) {
+		super();
+		
+		this.bnum = bnum;
+		this.btitle = btitle;
+		this.bcontents = bcontents;
+		this.memberid = memberid;
+		this.bhit = bhit;
+		this.bdate = bdate;
+		this.memberDto = memberDto;
+	}
+	
+	public int getBno() {
+		return bno;
+	}
+
+	public void setBno(int bno) {
+		this.bno = bno;
 	}
 
 	public int getBnum() {
@@ -95,6 +118,8 @@ public class BoardDto {
 	public void setMemberDto(MemberDto memberDto) {
 		this.memberDto = memberDto;
 	}
+
+	
 
 	
 	

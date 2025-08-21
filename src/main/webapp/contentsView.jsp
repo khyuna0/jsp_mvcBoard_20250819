@@ -29,9 +29,10 @@
   <div class="view-container">
     <h1 class="view-title">${boardDto.btitle }</h1>
     <div class="view-info">
-      <span>작성자: ${boardDto.memberid }</span>
-      <span>조회수: ${boardDto.bhit }</span>
-      <span>작성일: ${boardDto.bdate }</span>
+      <span>작성자: ${boardDto.memberid } |</span>
+      <span>조회수: ${boardDto.bhit } |</span>
+      <span>작성자 이메일: ${boardDto.memberDto.memberemail } |</span>
+      <span>작성일: ${boardDto.bdate } |</span>
     </div>
     <div class="view-content">
       <p>${boardDto.bcontents }.</p>

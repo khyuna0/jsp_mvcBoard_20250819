@@ -71,10 +71,16 @@ public class BoardController extends HttpServlet {
 			
 		// 게시판 모든 글 목록 보기 요청	
 		}else if(comm.equals("/List.do")) { 
-			bDtos = boardDao.boardList();
+			String searchType = request.getParameter("searchType");
+			String searchKeyword = request.getParameter("searchKeyword").strip();
+			
+			if( searchType != null && searchKeyword != null && !searchKeyword.strip().isEmpty() ) { // 유저가 검색 결과 리스트 원함
+				bDtos = boardDao.SearchBoardList(searchType ,searchKeyword);
+			} else { // 모든 게시판 글 리스트 원함
+				bDtos = boardDao.boardList();
+			}
 			request.setAttribute("bDtos", bDtos);
 			viewPage = "boardList.jsp";	
-			
 		// 게시판 글쓰기	
 		} else if (comm.equals("/boardWrite.do")) { 
 			session = request.getSession();
@@ -116,6 +122,7 @@ public class BoardController extends HttpServlet {
 		// 글 목록에서 선택된 글 목록 내용이 보여지는 페이지로 이동	
 		} else if (comm.equals("/View.do")) { 
 			String bnum = request.getParameter("bnum");
+			// 조회수
 			boardDao.updateBhit(bnum);
 			BoardDto boardDto = boardDao.contentView(bnum);
 			//System.out.println(boardDto);
