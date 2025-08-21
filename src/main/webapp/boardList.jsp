@@ -94,7 +94,7 @@
       <a href="List.do?page=${1 }">&laquo;</a>
     </c:if>  
     <!-- 이전 페이지 그룹으로 이동 -->
-    <c:if test="${startPage > 1 }">
+    <c:if test="${startPage > 1 }"> 
       <a href="List.do?page=${startPage -1 }">&lt;</a>
     </c:if>  
     
