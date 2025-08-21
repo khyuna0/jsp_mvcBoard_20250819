@@ -72,9 +72,9 @@ public class BoardController extends HttpServlet {
 		// 게시판 모든 글 목록 보기 요청	
 		}else if(comm.equals("/List.do")) { 
 			String searchType = request.getParameter("searchType");
-			String searchKeyword = request.getParameter("searchKeyword").strip();
+			String searchKeyword = request.getParameter("searchKeyword");
 			
-			if( searchType != null && searchKeyword != null && !searchKeyword.strip().isEmpty() ) { // 유저가 검색 결과 리스트 원함
+			if( searchType != null && searchKeyword != null && !searchKeyword.strip().isEmpty()) { // 유저가 검색 결과 리스트 원함
 				bDtos = boardDao.SearchBoardList(searchType ,searchKeyword);
 			} else { // 모든 게시판 글 리스트 원함
 				bDtos = boardDao.boardList();

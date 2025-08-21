@@ -130,7 +130,7 @@ public List<BoardDto> SearchBoardList(String searchType, String searchKeyword) {
 				String memberemail = rs.getString("memberemail");
 				
 				MemberDto memberDto = new MemberDto();
-				memberDto.setMemberid(memberid); 
+				//memberDto.setMemberid(memberid); 
 				memberDto.setMemberemail(memberemail); 
 			
 				BoardDto bDto = new BoardDto(bno ,bnum, btitle, bcontents, memberid, bhit, bdate, memberDto);
